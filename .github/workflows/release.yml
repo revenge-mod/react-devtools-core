@@ -1,0 +1,56 @@
+name: Build and release
+on:
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: 'Tag for this release'
+                required: true
+                type: string
+
+jobs:
+    build:
+        name: Build and release
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Setup Bun
+            uses: oven-sh/setup-bun@v2
+
+          - name: Install dependencies
+            run: bun install --frozen-lockfile
+
+          - name: Build
+            run: bun run build
+
+          - name: Create draft release
+            id: create_release
+            uses: actions/create-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              tag_name: ${{ github.event.inputs.tag }}
+              release_name: React DevTools Core ${{ github.event.inputs.tag }}
+              draft: true
+              prerelease: false
+      
+          - name: Upload dist
+            uses: actions/upload-release-asset@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              upload_url: ${{ steps.create_release.outputs.upload_url }}
+              asset_path: ./dist/index.js
+              asset_name: rdtc.js
+              asset_content_type: text/javascript
+              
+          - name: Publish release
+            uses: eregon/publish-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+              release_id: ${{ steps.create_release.outputs.id }}

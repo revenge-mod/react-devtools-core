@@ -1,0 +1,14 @@
+{
+  "name": "@revenge-mod/react-devtools-core",
+  "module": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "bun run build.ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "dependencies": {
+    "react-devtools-core": "6"
+  }
+}
