@@ -1,5 +1,5 @@
 import { buildSync } from 'esbuild'
-import { dependencies } from './package.json' with { type: 'json' }
+import { version } from './node_modules/react-devtools-core/package.json' with { type: 'json' }
 
 buildSync({
     entryPoints: ['index.js'],
@@ -7,11 +7,7 @@ buildSync({
     bundle: true,
     format: 'iife',
     minify: true,
-    minifyIdentifiers: false,
     define: {
-        __RDTC_VERSION: `"${dependencies['react-devtools-core']}"`
-    },
-    banner: {
-        js: "var window=globalThis,self=globalThis,console=new Proxy({},{get:()=>()=>void 0});"
+        __RDTC_VERSION: `"${version}"`
     }
 })
