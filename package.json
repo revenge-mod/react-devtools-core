@@ -6,12 +6,13 @@
     "build": "rollup --config rollup.config.mjs"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "rollup": "^4.24.0",
+    "rollup-plugin-define": "^1.0.1",
     "rollup-plugin-esbuild": "^6.1.1"
   },
   "dependencies": {
-    "react-devtools-core": "5.3.1",
-    "rollup-plugin-define": "^1.0.1"
+    "react-devtools-core": "5.3.1"
   }
 }
