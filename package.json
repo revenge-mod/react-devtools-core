@@ -9,6 +9,6 @@
     "esbuild": "^0.24.0"
   },
   "dependencies": {
-    "react-devtools-core": "6"
+    "react-devtools-core": "^6.0.0"
   }
 }
