@@ -10,7 +10,7 @@ export default {
         file: 'dist/index.js',
         format: 'iife',
         compact: true,
-        intro: "var window = globalThis, self = globalThis, console = new Proxy({}, { get: () => () => void 0 }), setTimeout = (x) => x();"
+        intro: "var window = globalThis, self = globalThis, console = new Proxy({}, { get: () => () => void 0 })"
     },
     plugins: [
         nodeResolve(),
