@@ -27,30 +27,13 @@ jobs:
           - name: Build
             run: bun run build
 
-          - name: Create draft release
-            id: create_release
-            uses: actions/create-release@v1
+          - name: Release
+            uses: softprops/action-gh-release@v2
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
+              name: React DevTools ${{ github.event.inputs.tag }}
               tag_name: ${{ github.event.inputs.tag }}
-              release_name: React DevTools Core ${{ github.event.inputs.tag }}
-              draft: true
-              prerelease: false
-      
-          - name: Upload dist
-            uses: actions/upload-release-asset@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              upload_url: ${{ steps.create_release.outputs.upload_url }}
-              asset_path: ./dist/index.js
-              asset_name: rdtc.js
-              asset_content_type: text/javascript
-              
-          - name: Publish release
-            uses: eregon/publish-release@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              release_id: ${{ steps.create_release.outputs.id }}
+              files: |
+                dist/index.js
+                dist/index.bundle
