@@ -6,16 +6,22 @@
     "build": "bun run build.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@swc/core": "^1.11.24",
-    "@types/bun": "^1.2.12",
-    "@unbound-mod/hermesc": "^1.0.3",
-    "rolldown": "^1.0.0-beta.8"
+    "react-native": "0.72.8",
+    "@swc/core": "^1.13.2",
+    "@types/bun": "^1.2.19",
+    "rolldown": "^1.0.0-beta.29"
   },
   "dependencies": {
-    "react-devtools-core": "5.3.1"
+    "react-devtools-core": "^6.1.5"
+  },
+  "overrides": {
+    "@react-native/community-cli-plugin": "npm:dry-uninstall",
+    "@react-native/codegen": "npm:dry-uninstall",
+    "babel-jest": "npm:dry-uninstall",
+    "babel-plugin-syntax-hermes-parser": "npm:dry-uninstall",
+    "jsc-android": "npm:dry-uninstall"
   },
   "patchedDependencies": {
-    "react-devtools-core@5.3.1": "./patches/react-devtools-core@5.3.1.patch"
+    "react-devtools-core@6.1.5": "patches/react-devtools-core@6.1.5.patch"
   }
 }

@@ -17,4 +17,4 @@ bun run build
 
 ## Usage
 
-Load the given file before React. You can access exports thru `globalThis.__REACT_DEVTOOLS__.exports`.
+Load the given file before React. You can access exports thru `globalThis.__REACT_DEVTOOLS__.exports`, and the version at `globalThis.__REACT_DEVTOOLS__.version`.

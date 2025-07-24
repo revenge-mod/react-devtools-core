@@ -1,0 +1,38 @@
+diff --git a/dist/backend.js b/dist/backend.js
+index 15c8ee70a80cb3ce86219b98fcda72fe6da39320..b7e6d5737adc9f12b5350d74ee36ede7eb3c8c63 100644
+--- a/dist/backend.js
++++ b/dist/backend.js
+@@ -17474,13 +17474,10 @@ function installHook(target, maybeSettingsOrSettingsPromise) {
+     };
+     patchConsoleForErrorsAndWarnings();
+   } else {
+-    Promise.resolve(maybeSettingsOrSettingsPromise).then(function (settings) {
+-      hook.settings = settings;
+-      hook.emit('settingsInitialized', settings);
+-      patchConsoleForErrorsAndWarnings();
+-    }).catch(function () {
+-      targetConsole.error("React DevTools failed to get Console Patching settings. Console won't be patched and some console features will not work.");
+-    });
++    var settings = maybeSettingsOrSettingsPromise;
++    hook.settings = settings;
++    hook.emit('settingsInitialized', settings);
++    patchConsoleForErrorsAndWarnings();
+   }
+ 
+   Object.defineProperty(target, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
+diff --git a/package.json b/package.json
+index 8ce8f436e815d2793176e93dcba7cdc8dfd33557..87a74e35c95e285a46579dd494d14be214e57427 100644
+--- a/package.json
++++ b/package.json
+@@ -4,6 +4,11 @@
+   "description": "Use react-devtools outside of the browser",
+   "license": "MIT",
+   "main": "./dist/backend.js",
++  "exports": {
++    ".": {
++      "default": "./dist/backend.js"
++    }
++  },
+   "repository": {
+     "type": "git",
+     "url": "https://github.com/facebook/react.git",

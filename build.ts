@@ -1,4 +1,5 @@
 import { transform } from '@swc/core'
+import { existsSync } from 'fs'
 import { type OutputChunk, type RolldownPlugin, rolldown } from 'rolldown'
 import rdtPkg from './node_modules/react-devtools-core/package.json' with { type: 'json' }
 
@@ -13,16 +14,13 @@ const bundle = await rolldown({
     },
     treeshake: true,
     keepNames: true,
-    moduleTypes: {
-        '.webp': 'dataurl',
-    },
     define: {
-        __RDT_VERSION: rdtPkg.version,
+        __RDT_VERSION: JSON.stringify(rdtPkg.version),
     },
     plugins: [
         swcPlugin(),
         hermesCPlugin({
-            flags: ['-O', '-eager', '-finline', '-fno-static-require', '-Wno-direct-eval', '-Wno-undefined-variable'],
+            flags: ['-O', '-finline', '-fno-static-require', '-Wno-direct-eval', '-Wno-undefined-variable'],
         }),
     ],
 })
@@ -86,43 +84,72 @@ function swcPlugin() {
     } satisfies RolldownPlugin
 }
 
-function hermesCPlugin({ flags }: { flags?: string[] } = {}) {
+async function hermesCPlugin({
+    after,
+    before,
+    flags,
+}: {
+    flags?: string[]
+    before?: (v: string) => void
+    after?: (v: string) => void
+} = {}) {
     const paths = {
-        win32: 'hermesc.exe',
-        darwin: 'hermesc',
-        linux: 'hermesc',
+        win32: 'win64-bin/hermesc.exe',
+        darwin: 'osx-bin/hermesc',
+        linux: 'linux64-bin/hermesc',
     }
 
-    if (!(process.platform in paths)) throw new Error(`Unsupported platform: ${process.platform}`)
+    if (!(process.platform in paths))
+        throw new Error(`Unsupported platform: ${process.platform}`)
 
-    const binPath = paths[process.platform as keyof typeof paths]
+    const sdksDir = './node_modules/react-native/sdks'
+    const binPath = `${sdksDir}/hermesc/${paths[process.platform as keyof typeof paths]}`
+
+    if (!existsSync(binPath))
+        throw new Error(
+            `Hermes compiler not found at ${binPath}. Please ensure you have react-native installed.`,
+        )
+
+    const ver = await Bun.file(`${sdksDir}/.hermesversion`).text()
 
     return {
         name: 'hermesc',
         generateBundle(_, bundle) {
+            if (before) before(ver)
+
             const file = bundle['index.js'] as OutputChunk
             if (!file || !file.code) throw new Error('No code to compile')
 
-            const cmd = Bun.spawnSync(
-                [
-                    `./node_modules/@unbound-mod/hermesc/${process.platform}/${binPath}`,
-                    '-emit-binary',
-                    ...(flags ?? []),
-                ],
-                {
-                    stdin: new Blob([file.code]),
-                    stdout: 'pipe',
-                },
-            )
+            const cmdlist = [binPath, '-emit-binary', ...(flags ?? [])]
+
+            const cmd = Bun.spawnSync<'pipe', 'pipe'>(cmdlist, {
+                // @ts-expect-error: Types are incorrect, but this works
+                stdin: new Blob([file.code]),
+                stdout: 'pipe',
+            })
+
+            if (cmd.exitCode) {
+                if (cmd.stderr.length)
+                    throw new Error(
+                        `Got error from hermesc: ${cmd.stderr.toString()}`,
+                    )
+                else
+                    throw new Error(`hermesc exited with code: ${cmd.exitCode}`)
+            }
 
             const buf = cmd.stdout
-            if (!buf.length) throw new Error('No output from hermesc')
+            if (!buf.length)
+                throw new Error(
+                    `No output from hermesc. Probably a compilation error.\nTry running the command manually: ${cmdlist.join(' ')}`,
+                )
 
             this.emitFile({
                 type: 'asset',
                 fileName: `${file.fileName.split('.')[0]!}.bundle`,
                 source: buf,
             })
+
+            if (after) after(ver)
         },
     } satisfies RolldownPlugin
 }
