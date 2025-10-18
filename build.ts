@@ -6,12 +6,13 @@ import rdtPkg from './node_modules/react-devtools-core/package.json' with { type
 const bundle = await rolldown({
     input: 'index.js',
     platform: 'neutral',
+    optimization: {
+        inlineConst: true
+    },
     experimental: {
         strictExecutionOrder: true,
     },
-    resolve: {
-        tsconfigFilename: 'tsconfig.json',
-    },
+    tsconfig: './tsconfig.json',
     treeshake: true,
     keepNames: true,
     define: {
