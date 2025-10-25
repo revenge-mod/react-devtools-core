@@ -7,7 +7,7 @@ const bundle = await rolldown({
     input: 'index.js',
     platform: 'neutral',
     optimization: {
-        inlineConst: true
+        inlineConst: true,
     },
     experimental: {
         strictExecutionOrder: true,
@@ -100,16 +100,13 @@ async function hermesCPlugin({
         linux: 'linux64-bin/hermesc',
     }
 
-    if (!(process.platform in paths))
-        throw new Error(`Unsupported platform: ${process.platform}`)
+    if (!(process.platform in paths)) throw new Error(`Unsupported platform: ${process.platform}`)
 
     const sdksDir = './node_modules/react-native/sdks'
     const binPath = `${sdksDir}/hermesc/${paths[process.platform as keyof typeof paths]}`
 
     if (!existsSync(binPath))
-        throw new Error(
-            `Hermes compiler not found at ${binPath}. Please ensure you have react-native installed.`,
-        )
+        throw new Error(`Hermes compiler not found at ${binPath}. Please ensure you have react-native installed.`)
 
     const ver = await Bun.file(`${sdksDir}/.hermesversion`).text()
 
@@ -130,12 +127,8 @@ async function hermesCPlugin({
             })
 
             if (cmd.exitCode) {
-                if (cmd.stderr.length)
-                    throw new Error(
-                        `Got error from hermesc: ${cmd.stderr.toString()}`,
-                    )
-                else
-                    throw new Error(`hermesc exited with code: ${cmd.exitCode}`)
+                if (cmd.stderr.length) throw new Error(`Got error from hermesc: ${cmd.stderr.toString()}`)
+                throw new Error(`hermesc exited with code: ${cmd.exitCode}`)
             }
 
             const buf = cmd.stdout

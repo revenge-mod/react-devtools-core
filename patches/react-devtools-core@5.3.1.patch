@@ -1,0 +1,18 @@
+# So rolldown doesn't complain about not being to resolve the module
+
+diff --git a/package.json b/package.json
+index 4c7f547..bf281fa 100644
+--- a/package.json
++++ b/package.json
+@@ -4,6 +4,11 @@
+   "description": "Use react-devtools outside of the browser",
+   "license": "MIT",
+   "main": "./dist/backend.js",
++  "exports": {
++    ".": {
++      "default": "./dist/backend.js"
++    }
++  },
+   "repository": {
+     "type": "git",
+     "url": "https://github.com/facebook/react.git",

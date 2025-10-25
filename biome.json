@@ -1,8 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.3.0/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -13,9 +11,6 @@
         }
       },
       "style": {
-        "noCommaOperator": {
-          "level": "off"
-        },
         "noNonNullAssertion": {
           "level": "off"
         },
@@ -31,6 +26,11 @@
           "level": "off"
         },
         "noConfusingVoidType": {
+          "level": "off"
+        }
+      },
+      "complexity": {
+        "noCommaOperator": {
           "level": "off"
         }
       }
@@ -58,12 +58,20 @@
       "quoteProperties": "asNeeded",
       "quoteStyle": "single",
       "semicolons": "asNeeded",
-      "trailingComma": "all"
+      "trailingCommas": "all"
     }
   },
   "files": {
     "ignoreUnknown": true,
-    "include": ["*.js", "*.json", "*.ts", "*.tsx", "*.jsx", "*.mjs"],
-    "ignore": ["dist/**/*", "node_modules/**/*"]
+    "includes": [
+      "**/*.js",
+      "**/*.json",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.jsx",
+      "**/*.mjs",
+      "!**/dist/**/*",
+      "!**/node_modules/**/*"
+    ]
   }
 }
