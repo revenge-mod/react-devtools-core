@@ -1,12 +1,6 @@
 import * as rdt from 'react-devtools-core'
 
-// TODO: Fix 6.0.0, this is one step in the right direction
-// reactDevToolsCore.initialize({
-//     appendComponentStack: false,
-//     breakOnConsoleErrors: false,
-//     showInlineWarningsAndErrors: false,
-//     hideConsoleLogsInStrictMode: false,
-// });
+rdt.initialize()
 
 globalThis.__REACT_DEVTOOLS__ = {
     version: __RDT_VERSION,

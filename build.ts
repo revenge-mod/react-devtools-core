@@ -6,22 +6,17 @@ import rdtPkg from './node_modules/react-devtools-core/package.json' with { type
 const bundle = await rolldown({
     input: 'index.js',
     platform: 'neutral',
-    optimization: {
-        inlineConst: true,
-    },
-    experimental: {
-        strictExecutionOrder: true,
-    },
     tsconfig: './tsconfig.json',
     treeshake: true,
-    keepNames: true,
-    define: {
-        __RDT_VERSION: JSON.stringify(rdtPkg.version),
+    transform: {
+        define: {
+            __RDT_VERSION: JSON.stringify(rdtPkg.version),
+        },
     },
     plugins: [
         swcPlugin(),
         hermesCPlugin({
-            flags: ['-O', '-finline', '-fno-static-require', '-Wno-direct-eval', '-Wno-undefined-variable'],
+            flags: ['-O', '-fno-static-require', '-Wno-direct-eval', '-Wno-undefined-variable'],
         }),
     ],
 })
@@ -29,9 +24,21 @@ const bundle = await rolldown({
 await bundle.write({
     file: 'dist/index.js',
     format: 'iife',
-    intro: 'var window = globalThis, self = globalThis, console = new Proxy({}, { get: () => () => undefined })',
-    footer: '//# sourceURL=RevengeReactDevTools',
-    inlineDynamicImports: true,
+    intro: `
+        function __fmt(arg) {
+            if (typeof arg === 'string') return arg
+            var proto = Object.getPrototypeOf(arg) ?? Object.prototype
+            return proto.toString.call(arg)
+        }
+        var __mklog = (lvl) => (...args) => {
+            if (args.length === 1) nativeLoggingHook(__fmt(args[0]), lvl)
+            else nativeLoggingHook(args.map(__fmt).join(' '), lvl)
+        }
+        var window = self = globalThis, console = { log: __mklog(0), info: __mklog(1), warn: __mklog(1), error: __mklog(2) }
+        console.log("React DevTools bundle loading...")
+`,
+    postFooter: '//# sourceURL=ReactDevTools',
+    keepNames: true,
 })
 
 function swcPlugin() {

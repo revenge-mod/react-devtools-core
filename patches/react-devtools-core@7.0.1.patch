@@ -1,0 +1,31 @@
+diff --git a/dist/backend.js b/dist/backend.js
+index 270a9faaa4d4a939d018a45946d8cae94978e1f2..ab7b6f4c81e930c68e5a54fd2baa7edf6f1963d9 100644
+--- a/dist/backend.js
++++ b/dist/backend.js
+@@ -15065,7 +15065,11 @@ function installHook(target, maybeSettingsOrSettingsPromise) {
+       hook.emit('settingsInitialized', settings);
+       patchConsoleForErrorsAndWarnings();
+     }).catch(function () {
+-      targetConsole.error("React DevTools failed to get Console Patching settings. Console won't be patched and some console features will not work.");
++      var settings = maybeSettingsOrSettingsPromise;
++      if (!settings) return targetConsole.error("React DevTools failed to get Console Patching settings. Console won't be patched and some console features will not work.");
++      hook.settings = settings;
++      hook.emit('settingsInitialized', settings);
++      patchConsoleForErrorsAndWarnings();
+     });
+   }
+   Object.defineProperty(target, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
+diff --git a/package.json b/package.json
+index 54b89e72e8ae5d701005b47385646350274f756e..e9e8514fadb044553f6a9daf6af00f76ce7fe702 100644
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,9 @@
+     "url": "https://github.com/facebook/react.git",
+     "directory": "packages/react-devtools-core"
+   },
++  "exports": {
++    ".": "./dist/backend.js"
++  },
+   "files": [
+     "dist",
+     "backend.js",

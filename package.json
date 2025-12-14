@@ -6,14 +6,12 @@
     "build": "bun run build.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.0",
-    "@swc/core": "^1.13.5",
-    "@types/bun": "^1.3.1",
+    "@biomejs/biome": "^2.4.4",
+    "@swc/core": "^1.15.18",
+    "@types/bun": "^1.3.9",
     "react-native": "0.82.1",
-    "rolldown": "^1.0.0-beta.44"
-  },
-  "dependencies": {
-    "react-devtools-core": "5.3.1"
+    "rolldown": "^1.0.0-rc.6",
+    "react-devtools-core": "7.0.1"
   },
   "overrides": {
     "@react-native/community-cli-plugin": "npm:dry-uninstall",
@@ -23,9 +21,6 @@
     "jsc-android": "npm:dry-uninstall"
   },
   "patchedDependencies": {
-    "react-devtools-core@5.3.1": "./patches/react-devtools-core@5.3.1.patch"
-  },
-  "trustedDependencies": [
-    "@swc/core"
-  ]
+    "react-devtools-core@7.0.1": "patches/react-devtools-core@7.0.1.patch"
+  }
 }
